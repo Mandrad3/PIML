@@ -7,6 +7,10 @@ app = FastAPI()
 df1 = pd.read_csv("mes_estreno.csv")
 df2 = pd.read_csv("dia_estreno.csv")
 
+@app.get('/')
+def root():
+    return {"message": "¡Bienvenido a mi API!"}
+
 # Función para obtener la cantidad de filmaciones en un mes específico
 @app.get('/cantidad_filmaciones_mes')
 def cantidad_filmaciones_mes(mes: str):
