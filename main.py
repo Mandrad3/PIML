@@ -40,6 +40,26 @@ def cantidad_filmaciones_dia(dia: str):
     
     return f"{cantidad} cantidad de películas fueron estrenadas en los días {dia}"
 
+# Cargar el DataFrame desde el archivo CSV
+df_popularity = pd.read_csv("popularity.csv")
+
+@app.get('/score_titulo/{titulo}')
+def score_titulo(titulo: str):
+    # Filtrar el DataFrame por el título de la filmación
+    df_filmacion = df_popularity[df_popularity['title'] == titulo]
+    
+    # Verificar si se encontró una coincidencia
+    if not df_filmacion.empty:
+        # Obtener los datos de la filmación
+        titulo = df_filmacion.iloc[0]['title']
+        año_estreno = df_filmacion.iloc[0]['release_year']
+        score = df_filmacion.iloc[0]['vote_average']
+        
+        return f"La película {titulo} fue estrenada en el año {año_estreno} con un score/popularidad de {score}"
+    else:
+        return f"No se encontró la película con título {titulo}"
+
+
         
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=10000)
