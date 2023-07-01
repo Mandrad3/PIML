@@ -66,24 +66,31 @@ def score_titulo(titulo: str):
     else:
         return f"No se encontró la película con título {titulo}"
 
-@app.get('/votos_titulo/{titulo}')    
-def votos_titulo(titulo_de_la_filmación):
-    # Reemplazar espacios por guiones bajos en el título
-    titulo_formateado = titulo_de_la_filmación.replace(" ", "_")
+@app.get('/votos_titulo/{titulo}')
+def votos_titulo(titulo: str):
+    # Reemplazar los espacios por guiones bajos en el título ingresado
+    titulo_formateado = titulo.replace(" ", "_")
     
-    # Buscar la película por título en el DataFrame
-    pelicula = df_popularity[df_popularity['title'] == titulo_formateado]
-
-    if len(pelicula) > 0:
-        votos = pelicula.iloc[0]['vote_count']
-        promedio = pelicula.iloc[0]['vote_average']
+    # Reemplazar los espacios por guiones bajos en los títulos del DataFrame
+    df_popularity['title'] = df_popularity['title'].str.replace(" ", "_")
+    
+    # Filtrar el DataFrame por el título de la filmación
+    df_filmacion = df_popularity[df_popularity['title'] == titulo_formateado]
+    
+    # Verificar si se encontró una coincidencia
+    if not df_filmacion.empty:
+        # Obtener los datos de la filmación
+        titulo = df_filmacion.iloc[0]['title']
+        año_estreno = df_filmacion.iloc[0]['release_year']
+        votos = df_filmacion.iloc[0]['vote_count']
+        promedio = df_filmacion.iloc[0]['vote_average']
         
         if votos >= 2000:
-            return f"La película {titulo_de_la_filmación} fue estrenada en el año {pelicula.iloc[0]['release_year']}. La misma cuenta con un total de {votos} valoraciones, con un promedio de {promedio}."
+            return f"La película {titulo} fue estrenada en el año {año_estreno}. La misma cuenta con un total de {votos} valoraciones, con un promedio de {promedio}."
         else:
-            return f"La película {titulo_de_la_filmación} fue estrenada en el año {pelicula.iloc[0]['release_year']}, pero no cumple con la condición de tener al menos 2000 valoraciones."
+            return f"La película {titulo} fue estrenada en el año {año_estreno}, pero no cumple con la condición de tener al menos 2000 valoraciones."
     else:
-        return f"No se encontró la película con título {titulo_de_la_filmación}"
+        return f"No se encontró la película con título {titulo}"
 
         
 if __name__ == '__main__':
