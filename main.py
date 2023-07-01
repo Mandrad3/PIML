@@ -65,7 +65,8 @@ def score_titulo(titulo: str):
         return f"La película {titulo} fue estrenada en el año {año_estreno} con un score/popularidad de {score}"
     else:
         return f"No se encontró la película con título {titulo}"
-    
+
+@app.get('/votos_titulo/{titulo}')    
 def votos_titulo(titulo_de_la_filmación):
     # Reemplazar espacios por guiones bajos en el título
     titulo_formateado = titulo_de_la_filmación.replace(" ", "_")
