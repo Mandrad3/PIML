@@ -43,10 +43,14 @@ def cantidad_filmaciones_dia(dia: str):
 # Cargar el DataFrame desde el archivo CSV
 df_popularity = pd.read_csv("popularity.csv")
 
+
 @app.get('/score_titulo/{titulo}')
 def score_titulo(titulo: str):
-    # Reemplazar los espacios por guiones bajos en el título
+    # Reemplazar los espacios por guiones bajos en el título ingresado
     titulo = titulo.replace(" ", "_")
+    
+    # Reemplazar los espacios por guiones bajos en los títulos del DataFrame
+    df_popularity['title'] = df_popularity['title'].str.replace(" ", "_")
     
     # Filtrar el DataFrame por el título de la filmación
     df_filmacion = df_popularity[df_popularity['title'] == titulo]
