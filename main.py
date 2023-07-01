@@ -5,9 +5,6 @@ import uvicorn
 
 app = FastAPI()
 
-df1 = pd.read_csv("mes_estreno.csv")
-df2 = pd.read_csv("dia_estreno.csv")
-
 @app.get('/')
 def root():
     return {"message": "¡Bienvenido a mi API!"}
@@ -26,6 +23,22 @@ def cantidad_filmaciones_mes(mes: str):
     cantidad = len(df_mes)
 
     return f"{cantidad} cantidad de películas fueron estrenadas en el mes de {mes}"
+
+df_dia_estreno = pd.read_csv("dia_estreno.csv")
+
+@app.get('/cantidad_filmaciones_dia/{dia}')
+def cantidad_filmaciones_dia(dia: str):
+    # Convertir el día a minúsculas para realizar la comparación
+    dia = dia.lower()
+    
+    # Filtrar el DataFrame por el día consultado
+    df_dia = df_dia_estreno[df_dia_estreno['release_day'] == dia]
+    
+    # Obtener la cantidad de películas en el día
+    cantidad = len(df_dia)
+    
+    return f"{cantidad} cantidad de películas fueron estrenadas en los días {dia}"
+
         
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=10000)
