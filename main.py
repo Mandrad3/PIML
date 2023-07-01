@@ -24,6 +24,7 @@ def cantidad_filmaciones_mes(mes: str):
 
     return f"{cantidad} cantidad de películas fueron estrenadas en el mes de {mes}"
 
+# Cargar el DataFrame desde el archivo CSV
 df_dia_estreno = pd.read_csv("dia_estreno.csv")
 
 @app.get('/cantidad_filmaciones_dia/{dia}')
@@ -32,7 +33,7 @@ def cantidad_filmaciones_dia(dia: str):
     dia = dia.lower()
     
     # Filtrar el DataFrame por el día consultado
-    df_dia = df_dia_estreno[df_dia_estreno['release_day'] == dia]
+    df_dia = df_dia_estreno[df_dia_estreno['release_day'].str.lower() == dia]
     
     # Obtener la cantidad de películas en el día
     cantidad = len(df_dia)
