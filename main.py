@@ -65,6 +65,23 @@ def score_titulo(titulo: str):
         return f"La película {titulo} fue estrenada en el año {año_estreno} con un score/popularidad de {score}"
     else:
         return f"No se encontró la película con título {titulo}"
+    
+    def votos_titulo(titulo_de_la_filmación):
+        titulo_formateado = titulo_de_la_filmación.replace(" ", "_")
+    
+    # Buscar la película por título en el DataFrame
+    pelicula = df_popularity[df_popularity['title'] == titulo_formateado]
+
+    if len(pelicula) > 0:
+        votos = pelicula.iloc[0]['vote_count']
+        promedio = pelicula.iloc[0]['vote_average']
+        
+        if votos >= 2000:
+            return f"La película {titulo_de_la_filmación} fue estrenada en el año {pelicula.iloc[0]['release_year']}. La misma cuenta con un total de {votos} valoraciones, con un promedio de {promedio}."
+        else:
+            return f"La película {titulo_de_la_filmación} fue estrenada en el año {pelicula.iloc[0]['release_year']}, pero no cumple con la condición de tener al menos 2000 valoraciones."
+    else:
+        return f"No se encontró la película con título {titulo_de_la_filmación}"
 
         
 if __name__ == '__main__':
