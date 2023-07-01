@@ -45,6 +45,9 @@ df_popularity = pd.read_csv("popularity.csv")
 
 @app.get('/score_titulo/{titulo}')
 def score_titulo(titulo: str):
+    # Reemplazar los espacios por guiones bajos en el título
+    titulo = titulo.replace(" ", "_")
+    
     # Filtrar el DataFrame por el título de la filmación
     df_filmacion = df_popularity[df_popularity['title'] == titulo]
     
@@ -58,7 +61,6 @@ def score_titulo(titulo: str):
         return f"La película {titulo} fue estrenada en el año {año_estreno} con un score/popularidad de {score}"
     else:
         return f"No se encontró la película con título {titulo}"
-
 
         
 if __name__ == '__main__':
