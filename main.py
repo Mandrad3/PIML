@@ -62,26 +62,16 @@ def franquicia(franquicia: str):
 
 @app.get('/peliculas_pais/{pais}')
 def peliculas_pais(pais: str):
-    # Leer el archivo CSV de países con pandas
-    df_paises = pd.read_csv('country.csv')
-
-    # Filtrar el DataFrame por el país especificado
-    df_pais = df_paises[df_paises['production_countries'] == pais]
-
-    # Verificar si se encontró el país
-    if df_pais.empty:
-        return f"No se encontró el país con ID {pais}"
-
-    # Leer el archivo CSV de películas con pandas
-    df_peliculas = pd.read_csv('duracion.csv')
-
-    # Filtrar el DataFrame por el país especificado
-    df_peliculas_pais = df_peliculas[df_peliculas['production_countries'].str.contains(pais)]
-
-    # Obtener la cantidad de películas producidas en el país
-    cantidad_peliculas = len(df_peliculas_pais)
-
-    return f"Se produjeron {cantidad_peliculas} películas en el país {pais}"
+    # Leer el archivo CSV con pandas
+    df = pd.read_csv('country.csv')
+    
+    # Filtrar el DataFrame por el país consultado
+    df_pais = df[df['production_countries'] == pais]
+    
+    # Obtener la cantidad de películas en el país
+    cantidad = len(df_pais)
+    
+    return f"Se produjeron {cantidad} películas en el país {pais}"
 
 @app.get('/productoras_exitosas/{productora}')
 def productoras_exitosas(productora: str):
