@@ -32,7 +32,7 @@ def peliculas_duracion(pelicula: str):
     # Verificar si se encontró una coincidencia
     if not df_pelicula.empty:
         # Obtener los datos de la película
-        duracion = df_pelicula.iloc[0]['duracion']
+        duracion = df_pelicula.iloc[0]['runtime']
         año = df_pelicula.iloc[0]['release_year']
         
         return f"Película: {pelicula}. Duración: {duracion}. Año: {año}"
@@ -66,14 +66,11 @@ def peliculas_pais(pais: str):
     df_paises = pd.read_csv('country.csv')
 
     # Filtrar el DataFrame por el país especificado
-    df_pais = df_paises[df_paises['id'] == pais]
+    df_pais = df_paises[df_paises['production_countries'] == pais]
 
     # Verificar si se encontró el país
     if df_pais.empty:
         return f"No se encontró el país con ID {pais}"
-
-    # Obtener el nombre completo del país
-    nombre_pais = df_pais.iloc[0]['production_countries']
 
     # Leer el archivo CSV de películas con pandas
     df_peliculas = pd.read_csv('duracion.csv')
@@ -84,7 +81,7 @@ def peliculas_pais(pais: str):
     # Obtener la cantidad de películas producidas en el país
     cantidad_peliculas = len(df_peliculas_pais)
 
-    return f"Se produjeron {cantidad_peliculas} películas en el país {nombre_pais}"
+    return f"Se produjeron {cantidad_peliculas} películas en el país {pais}"
 
 @app.get('/productoras_exitosas/{productora}')
 def productoras_exitosas(productora: str):
