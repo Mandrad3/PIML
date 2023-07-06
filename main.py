@@ -41,42 +41,48 @@ def peliculas_duracion(pelicula: str):
 
 @app.get('/franquicia/{franquicia}')
 def franquicia(franquicia: str):
-    # Leer el archivo CSV con pandas y filtrar por la franquicia consultada
-    df = pd.read_csv('duracion.csv')
+    df = pd.read_csv('collection.csv')  # Leer el archivo CSV
+    
+    # Filtrar por la franquicia especificada
     df_franquicia = df[df['name_collection'] == franquicia]
-
-    # Verificar si se encontraron películas de la franquicia
-    if not df_franquicia.empty:
-        # Obtener la cantidad de películas de la franquicia
-        cantidad_peliculas = len(df_franquicia)
-
-        # Calcular la ganancia total y promedio de la franquicia
-        ganancia_total = df_franquicia['revenue'].sum()
-        ganancia_promedio = df_franquicia['revenue'].mean()
-
-        return f"La franquicia {franquicia} posee {cantidad_peliculas} películas, una ganancia total de {ganancia_total} y una ganancia promedio de {ganancia_promedio}"
-    else:
-        return f"No se encontraron películas de la franquicia: {franquicia}"
+    
+    # Obtener la cantidad de películas y la ganancia total
+    cantidad_peliculas = len(df_franquicia)
+    ganancia_total = df_franquicia['revenue'].sum()
+    
+    # Calcular el promedio de ganancia por película
+    ganancia_promedio = ganancia_total / cantidad_peliculas
+    
+    return {
+        "franquicia": franquicia,
+        "peliculas": cantidad_peliculas,
+        "ganancia_total": ganancia_total,
+        "ganancia_promedio": ganancia_promedio
+    }
 
 @app.get('/peliculas_pais/{pais}')
 def peliculas_pais(pais: str):
     # Leer el archivo CSV de países con pandas
     df_paises = pd.read_csv('country.csv')
 
-    # Filtrar el DataFrame por el país consultado
+    # Filtrar el DataFrame por el país especificado
     df_pais = df_paises[df_paises['id'] == pais]
+
+    # Verificar si se encontró el país
+    if df_pais.empty:
+        return f"No se encontró el país con ID {pais}"
 
     # Obtener el nombre completo del país
     nombre_pais = df_pais.iloc[0]['production_countries']
 
-    # Leer el archivo CSV de idiomas con pandas
-    df_idiomas = pd.read_csv('idioma.csv')
+    # Leer el archivo CSV de películas con pandas
+    df_peliculas = pd.read_csv('duracion.csv')
 
-    # Filtrar el DataFrame por el país consultado
-    df_idioma_pais = df_idiomas[df_idiomas['id'] == pais]
+    # Filtrar el DataFrame por el país especificado
+    df_peliculas_pais = df_peliculas[df_peliculas['production_countries'].str.contains(pais)]
 
     # Obtener la cantidad de películas producidas en el país
-    cantidad_peliculas = len(df_idioma_pais)
+    cantidad_peliculas = len(df_peliculas_pais)
 
     return f"Se produjeron {cantidad_peliculas} películas en el país {nombre_pais}"
 
