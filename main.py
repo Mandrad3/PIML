@@ -124,7 +124,8 @@ def get_director(nombre_director: str):
         'peliculas': peliculas
     }
 
-df = pd.read_csv('idioma.csv')
+df = pd.read_csv('datos.csv')
+
 # Crea una muestra aleatoria con 5000 filas del dataset
 muestra = df.head(5000)
 
