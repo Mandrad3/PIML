@@ -62,26 +62,16 @@ def franquicia(franquicia: str):
 
 @app.get('/peliculas_pais/{pais}')
 def peliculas_pais(pais: str):
-    # Leer el archivo CSV de países con pandas
-    df_paises = pd.read_csv('country.csv')
-
-    # Filtrar el DataFrame por el país especificado
-    df_pais = df_paises[df_paises['production_countries'] == pais]
-
-    # Verificar si se encontró el país
-    if df_pais.empty:
-        return f"No se encontró el país con ID {pais}"
-
-    # Leer el archivo CSV de películas con pandas
-    df_peliculas = pd.read_csv('duracion.csv')
-
-    # Filtrar el DataFrame por el país especificado
-    df_peliculas_pais = df_peliculas[df_peliculas['production_countries'].str.contains(pais)]
-
-    # Obtener la cantidad de películas producidas en el país
-    cantidad_peliculas = len(df_peliculas_pais)
-
-    return f"Se produjeron {cantidad_peliculas} películas en el país {pais}"
+    # Leer el archivo CSV con pandas
+    df = pd.read_csv('country.csv')
+    
+    # Filtrar el DataFrame por el país consultado
+    df_pais = df[df['production_countries'] == pais]
+    
+    # Obtener la cantidad de películas en el país
+    cantidad = len(df_pais)
+    
+    return f"Se produjeron {cantidad} películas en el país {pais}"
 
 @app.get('/productoras_exitosas/{productora}')
 def productoras_exitosas(productora: str):
@@ -129,6 +119,50 @@ def get_director(nombre_director: str):
         'exito_director': exito_director,
         'peliculas': peliculas
     }
-        
+
+df = pd.read_csv('idioma.csv')
+# Crea una muestra aleatoria con 5000 filas del dataset
+muestra = df.head(5000)
+
+# Crea la matriz de características TF-IDF
+tfidf = TfidfVectorizer(stop_words='english')
+tfidf_matrix = tfidf.fit_transform(muestra['overview'].fillna(''))
+
+# Calcula la similitud coseno entre todas las descripciones
+cosine_similarity = linear_kernel(tfidf_matrix, tfidf_matrix)
+
+# Función que calcula la similitud entre dos conjuntos de géneros cinematográficos
+def calcular_similitud_generos(generos_referencia, generos):
+    if pd.isnull(generos_referencia) or pd.isnull(generos):
+        return 0.0
+
+    generos_referencia = set(generos_referencia.split('|'))
+    generos = set(generos.split('|'))
+    intersection = len(generos_referencia.intersection(generos))
+    union = len(generos_referencia.union(generos))
+    return intersection / union
+
+# Crea la función de recomendación
+@app.get("/recomendacion")
+def recomendacion(titulo: str):
+    # Busca el id de la pelicula en la muestra
+    idx = muestra[muestra['title'] == titulo].index[0]
+    sim_cosine = cosine_similarity[idx]
+
+    # Calcula la similitud de géneros para la película de referencia
+    generos_referencia = muestra.loc[idx, 'genres']
+    sim_generos = muestra['genres'].apply(lambda x: calcular_similitud_generos(generos_referencia, x))
+
+    # Combina la similitud coseno y la similitud de géneros
+    sim_total = sim_cosine + sim_generos
+
+    # Obtiene los índices de las películas similares
+    similar_indices = sim_total.argsort()[::-1][1:6]
+
+    # Obtiene los títulos de las películas similares
+    similar_movies = muestra['title'].iloc[similar_indices].tolist()
+
+    return similar_movies
+
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=10000)

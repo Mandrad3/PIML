@@ -14,3 +14,7 @@ starlette==0.27.0
 typing_extensions==4.6.3
 tzdata==2023.3
 uvicorn==0.22.0
+scikit-learn
+matplotlib
+seaborn
+wordcloud
