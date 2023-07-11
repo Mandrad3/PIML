@@ -1,6 +1,10 @@
-from fastapi import FastAPI
 import pandas as pd
-import uvicorn
+from fastapi import FastAPI
+import  uvicorn
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import linear_kernel
 
 
 app = FastAPI()
