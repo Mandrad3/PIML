@@ -127,7 +127,7 @@ def get_director(nombre_director: str):
 df = pd.read_csv('datos.csv')
 
 # Crea una muestra aleatoria con 5000 filas del dataset
-muestra = df.head(5000)
+muestra = df.head(20000)
 
 # Crea la matriz de características TF-IDF
 tfidf = TfidfVectorizer(stop_words='english')
